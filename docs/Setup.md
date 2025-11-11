@@ -140,7 +140,7 @@ The project includes a deployment script that makes it easy to copy files to you
    ```
 4. The script will:
    - Create the destination directory if it doesn't exist (prompts for confirmation)
-   - Copy `frontend\`, `backend\`, `docs\`, and `README.md` to the destination
+   - Copy `frontend\` and `backend\` directories to the destination
    - Display a success message when complete
 
 **Example output:**
@@ -154,13 +154,10 @@ Destination: C:\xampp\htdocs\attendance
 
 Copying files...
 
-[1/3] Copying frontend files...
+[1/2] Copying frontend files...
    - frontend files copied successfully
-[2/3] Copying backend files...
+[2/2] Copying backend files...
    - backend files copied successfully
-[3/3] Copying documentation...
-   - README.md copied
-   - docs directory copied
 
 ========================================
 Deployment completed successfully!
