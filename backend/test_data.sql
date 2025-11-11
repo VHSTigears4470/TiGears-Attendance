@@ -1,0 +1,42 @@
+-- Clear existing data from tables
+TRUNCATE TABLE attendance_log;
+DELETE FROM students;
+
+-- Insert Middle Earth character test data
+-- 30+ characters with 8-digit random student IDs
+INSERT INTO students (student_id, name) VALUES
+('10482756', 'Frodo Baggins'),
+('23789012', 'Samwise Gamgee'),
+('45612389', 'Gandalf the Grey'),
+('78934521', 'Gandalf the White'),
+('89234567', 'Aragorn son Arathorn'),
+('12456789', 'Legolas Greenleaf'),
+('56789123', 'Gimli son Gloin'),
+('34567891', 'Boromir of Gondor'),
+('67891234', 'Peregrin Took'),
+('90123456', 'Meriadoc Brandybuck'),
+('23456780', 'Bilbo Baggins'),
+('45678902', 'Galadriel of Lorien'),
+('67890124', 'Elrond Half-elven'),
+('89012346', 'Arwen Evenstar'),
+('11234567', 'Theoden of Rohan'),
+('33456789', 'Eomer of Rohan'),
+('55678901', 'Eowyn of Rohan'),
+('77890123', 'Faramir of Gondor'),
+('99012345', 'Saruman the White'),
+('22334455', 'Radagast the Brown'),
+('44556677', 'Gollum Smeagol'),
+('66778899', 'Sauron the Deceiver'),
+('88990011', 'Elendil the Tall'),
+('11223344', 'Isildur of Gondor'),
+('33445566', 'Gil-galad Last King'),
+('55667788', 'Celeborn the Wise'),
+('77889900', 'Thranduil Elvenking'),
+('99001122', 'Bard the Bowman'),
+('22113344', 'Thorin Oakenshield'),
+('44335566', 'Balin of Moria'),
+('66557788', 'Dwalin the Dwarf'),
+('88779900', 'Elros Tar-Minyatur'),
+('10293847', 'Glorfindel of Rivendell'),
+('29384756', 'Tom Bombadil'),
+('38475629', 'Goldberry the River-daughter');
