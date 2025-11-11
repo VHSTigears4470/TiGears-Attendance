@@ -1,12 +1,12 @@
 // Global variables
 let selectedStudentId = null;
 let selectedStudentButton = null;
+let selectedStudentStatus = null;
 
 // Get DOM elements
 const studentButtons = document.querySelectorAll('.student-item');
 const actionButtons = document.getElementById('actionButtons');
-const signInBtn = document.getElementById('signInBtn');
-const signOutBtn = document.getElementById('signOutBtn');
+const confirmBtn = document.getElementById('confirmBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const messageDiv = document.getElementById('message');
 
@@ -20,8 +20,21 @@ studentButtons.forEach(button => {
 
         // Select current student
         selectedStudentId = this.getAttribute('data-student-id');
+        selectedStudentStatus = this.getAttribute('data-status');
         selectedStudentButton = this;
         this.classList.add('selected');
+
+        // Update confirm button text based on status
+        if (selectedStudentStatus === 'in') {
+            confirmBtn.textContent = 'Confirm Sign Out';
+            confirmBtn.className = 'action-button confirm sign-out';
+        } else if (selectedStudentStatus === 'out') {
+            confirmBtn.textContent = 'Confirm Sign In';
+            confirmBtn.className = 'action-button confirm sign-in';
+        } else {
+            confirmBtn.textContent = 'Confirm First Sign In';
+            confirmBtn.className = 'action-button confirm sign-in';
+        }
 
         // Show action buttons
         actionButtons.style.display = 'flex';
@@ -34,17 +47,12 @@ studentButtons.forEach(button => {
     });
 });
 
-// Sign In button
-signInBtn.addEventListener('click', function() {
-    if (selectedStudentId) {
-        recordAttendance(selectedStudentId, 'in');
-    }
-});
-
-// Sign Out button
-signOutBtn.addEventListener('click', function() {
-    if (selectedStudentId) {
-        recordAttendance(selectedStudentId, 'out');
+// Confirm button
+confirmBtn.addEventListener('click', function() {
+    if (selectedStudentId && selectedStudentStatus) {
+        // Determine action based on current status
+        let action = (selectedStudentStatus === 'in') ? 'out' : 'in';
+        recordAttendance(selectedStudentId, action);
     }
 });
 
@@ -110,6 +118,7 @@ function clearSelection() {
     }
     selectedStudentId = null;
     selectedStudentButton = null;
+    selectedStudentStatus = null;
     actionButtons.style.display = 'none';
 }
 

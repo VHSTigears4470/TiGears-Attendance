@@ -96,12 +96,12 @@ h1 {
     transform: translateY(0);
 }
 
-.sign-in {
+.confirm.sign-in {
     background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
     color: white;
 }
 
-.sign-out {
+.confirm.sign-out {
     background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
     color: white;
 }
@@ -135,15 +135,15 @@ h1 {
     color: white;
 }
 
-.logged-in-title {
+.signed-in-title {
     background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
 }
 
-.logged-out-title {
+.signed-out-title {
     background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
 }
 
-.never-logged-title {
+.never-signed-title {
     background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
 }
 

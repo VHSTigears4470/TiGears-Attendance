@@ -59,61 +59,60 @@ if ($result->num_rows > 0) {
         <div id="message" class="message"></div>
 
         <div class="action-buttons" id="actionButtons" style="display: none;">
-            <button class="action-button sign-in" id="signInBtn">Sign In</button>
-            <button class="action-button sign-out" id="signOutBtn">Sign Out</button>
+            <button class="action-button confirm" id="confirmBtn">Confirm</button>
             <button class="action-button cancel" id="cancelBtn">Cancel</button>
         </div>
 
         <div class="student-lists">
-            <!-- Logged In Students -->
-            <div class="student-list-section logged-in-section">
-                <h2 class="list-title logged-in-title">Logged In (<?php echo count($logged_in); ?>)</h2>
+            <!-- Signed In Students -->
+            <div class="student-list-section signed-in-section">
+                <h2 class="list-title signed-in-title">Signed In (<?php echo count($logged_in); ?>)</h2>
                 <div class="student-list">
                     <?php
                     if (count($logged_in) > 0) {
                         foreach($logged_in as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '">';
+                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="in">';
                             echo htmlspecialchars($student['name']);
                             echo '</button>';
                         }
                     } else {
-                        echo '<p class="empty-list">No students currently logged in</p>';
+                        echo '<p class="empty-list">No students currently signed in</p>';
                     }
                     ?>
                 </div>
             </div>
 
-            <!-- Logged Out Students -->
-            <div class="student-list-section logged-out-section">
-                <h2 class="list-title logged-out-title">Logged Out (<?php echo count($logged_out); ?>)</h2>
+            <!-- Signed Out Students -->
+            <div class="student-list-section signed-out-section">
+                <h2 class="list-title signed-out-title">Signed Out (<?php echo count($logged_out); ?>)</h2>
                 <div class="student-list">
                     <?php
                     if (count($logged_out) > 0) {
                         foreach($logged_out as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '">';
+                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="out">';
                             echo htmlspecialchars($student['name']);
                             echo '</button>';
                         }
                     } else {
-                        echo '<p class="empty-list">No students logged out</p>';
+                        echo '<p class="empty-list">No students signed out</p>';
                     }
                     ?>
                 </div>
             </div>
 
-            <!-- Never Logged In Students -->
-            <div class="student-list-section never-logged-section">
-                <h2 class="list-title never-logged-title">Never Logged In (<?php echo count($never_logged); ?>)</h2>
+            <!-- Never Signed In Students -->
+            <div class="student-list-section never-signed-section">
+                <h2 class="list-title never-signed-title">Never Signed In (<?php echo count($never_logged); ?>)</h2>
                 <div class="student-list">
                     <?php
                     if (count($never_logged) > 0) {
                         foreach($never_logged as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '">';
+                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="never">';
                             echo htmlspecialchars($student['name']);
                             echo '</button>';
                         }
                     } else {
-                        echo '<p class="empty-list">All students have logged in at least once</p>';
+                        echo '<p class="empty-list">All students have signed in at least once</p>';
                     }
                     ?>
                 </div>
