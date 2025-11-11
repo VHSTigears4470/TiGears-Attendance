@@ -102,7 +102,77 @@ Alternatively, you can install them as Windows services:
 
 ---
 
-## Step 4: Configure the Application
+## Step 4: Import Test Data (Optional)
+
+The project includes test data with 35 Middle Earth characters to help you test the system before adding your real students.
+
+### What's Included
+
+- **File**: `backend/test_data.sql`
+- **Contents**: 35 characters from J.R.R. Tolkien's Middle Earth with 8-digit random student IDs
+- **Reference**: `backend/TestData.csv` contains the same data for easy ID lookup
+
+The test data includes characters like Frodo Baggins, Gandalf the Grey, Gandalf the White, Aragorn, Legolas, and many more.
+
+### Option A: Using Command Line
+
+1. Open **Command Prompt** (Windows key + R, type `cmd`, press Enter)
+2. Navigate to your project directory:
+   ```cmd
+   cd d:\VHSTigears\Attendance
+   ```
+3. Run the MySQL command line client:
+   ```cmd
+   C:\xampp\mysql\bin\mysql.exe -u root -p
+   ```
+4. When prompted for password, just press **Enter** (default is no password)
+5. Select the database:
+   ```sql
+   USE robotics_attendance;
+   ```
+6. Run the test data file:
+   ```sql
+   source backend/test_data.sql
+   ```
+7. Verify the test data was imported:
+   ```sql
+   SELECT COUNT(*) FROM students;
+   SELECT * FROM students LIMIT 5;
+   ```
+8. You should see 35 students, and the first few names should be Middle Earth characters
+9. Type `exit` to quit MySQL
+
+### Option B: Using phpMyAdmin (GUI Method)
+
+1. Open your web browser
+2. Go to: http://localhost/phpmyadmin
+3. Click on **"robotics_attendance"** database on the left
+4. Click the **"SQL"** tab at the top
+5. Click **"Choose File"** or use the "Import files" section
+6. Navigate to `d:\VHSTigears\Attendance\backend\test_data.sql`
+7. Click **"Go"** button at the bottom
+8. You should see a success message
+9. Click on **"students"** table on the left
+10. Click **"Browse"** tab to see all 35 Middle Earth characters
+
+### Looking Up Student IDs
+
+When testing with the test data, you'll need to know the student IDs. You can:
+
+1. **Check the CSV file**: Open `backend/TestData.csv` in Excel, Notepad, or any text editor
+2. **Query in phpMyAdmin**: Browse the students table to see names and IDs
+3. **Print it out**: Print the CSV file and keep it near the kiosk for testing
+
+**Note**: When you're ready to use the system with real students, you can clear this test data by running:
+```sql
+TRUNCATE TABLE attendance_log;
+DELETE FROM students;
+```
+Then follow the instructions in "Adding Real Students" section below.
+
+---
+
+## Step 5: Configure the Application
 
 ### Update Database Configuration
 
@@ -123,7 +193,7 @@ Alternatively, you can install them as Windows services:
 
 ---
 
-## Step 5: Deploy Project Files to Web Server
+## Step 6: Deploy Project Files to Web Server
 
 ### Using the Deployment Script
 
@@ -168,7 +238,7 @@ Deployment completed successfully!
 
 ---
 
-## Step 6: Test the Application
+## Step 7: Test the Application
 
 ### Access the Application
 
@@ -190,7 +260,7 @@ Using phpMyAdmin:
 
 ---
 
-## Step 7: Configure for Touchscreen Kiosk
+## Step 8: Configure for Touchscreen Kiosk
 
 ### Set Browser to Start on Boot
 
