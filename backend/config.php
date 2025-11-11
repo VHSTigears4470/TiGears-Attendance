@@ -6,5 +6,5 @@ define('DB_PASS', '');      // Change this to your MySQL password
 define('DB_NAME', 'robotics_attendance');
 
 // Timezone configuration
-date_default_timezone_set('America/New_York');  // Change to your timezone
+date_default_timezone_set('America/Los_Angeles');  // Change to your timezone
 ?>

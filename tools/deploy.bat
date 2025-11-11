@@ -72,20 +72,6 @@ if errorlevel 1 (
 )
 echo    - backend files copied successfully
 
-REM Copy README if it exists
-echo [3/3] Copying documentation...
-if exist "%PROJECT_ROOT%\README.md" (
-    copy "%PROJECT_ROOT%\README.md" "%DEST_PATH%\" /Y >nul
-    echo    - README.md copied
-)
-if exist "%PROJECT_ROOT%\docs" (
-    if exist "%DEST_PATH%\docs" (
-        rmdir /s /q "%DEST_PATH%\docs"
-    )
-    xcopy "%PROJECT_ROOT%\docs" "%DEST_PATH%\docs\" /E /I /Y /Q >nul
-    echo    - docs directory copied
-)
-
 echo.
 echo ========================================
 echo Deployment completed successfully!
