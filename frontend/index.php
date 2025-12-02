@@ -1,5 +1,11 @@
 <?php
 require_once '../backend/db.php';
+require_once 'awards.php';
+
+// Load data for awards (students and attendance tables)
+$awardData = loadAwardData($conn);
+$awardStudents = $awardData['students'];
+$awardAttendance = $awardData['attendance'];
 
 // Query to get all students with their last attendance status
 $sql = "
@@ -59,6 +65,17 @@ if ($result->num_rows > 0) {
             <img src="assets/Logo.jpg" alt="TiGears Logo" class="header-logo">
         </div>
         <p class="instructions">Tap your name and then tap Sign In or Sign Out</p>
+
+        <!-- Awards Section -->
+        <div class="awards-section">
+            <?php
+            // Each box is populated by a function in awards.php
+            // To change what a box displays, edit the corresponding function
+            populateLeftBox($awardStudents, $awardAttendance);
+            populateMiddleBox($awardStudents, $awardAttendance);
+            populateRightBox($awardStudents, $awardAttendance);
+            ?>
+        </div>
 
         <div id="message" class="message"></div>
 

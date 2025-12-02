@@ -71,6 +71,119 @@ h1 {
     font-size: 0.95em;
 }
 
+/* Awards Section */
+.awards-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.award-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.award-title {
+    font-size: 0.95em;
+    font-weight: bold;
+    padding: 8px 10px;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    margin: 0;
+    color: white;
+}
+
+.total-time-title {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.most-signins-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.today-time-title {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.award-list {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 8px;
+    min-height: 100px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.award-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    font-size: 0.85em;
+}
+
+.award-item:last-child {
+    margin-bottom: 0;
+}
+
+.award-rank {
+    font-weight: bold;
+    color: #667eea;
+    min-width: 24px;
+    text-align: center;
+}
+
+.award-item:nth-child(1) .award-rank {
+    color: #FFD700;
+}
+
+.award-item:nth-child(2) .award-rank {
+    color: #C0C0C0;
+}
+
+.award-item:nth-child(3) .award-rank {
+    color: #CD7F32;
+}
+
+.award-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+.award-value {
+    font-weight: bold;
+    color: #4CAF50;
+    margin-left: 8px;
+}
+
+.empty-award {
+    text-align: center;
+    color: #999;
+    font-size: 0.85em;
+    padding: 20px 10px;
+    font-style: italic;
+}
+
+/* Responsive awards */
+@media (max-width: 768px) {
+    .awards-section {
+        grid-template-columns: 1fr;
+    }
+
+    .award-list {
+        max-height: 150px;
+    }
+}
+
 .message {
     text-align: center;
     padding: 12px;
