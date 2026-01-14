@@ -452,16 +452,22 @@ function awardInWindowTime($students, $attendance, $windows) {
 
 /**
  * Helper: Check if a timestamp falls within any attendance window
+ *
+ * A sign-in is considered "in window" if it's on a day with a window AND
+ * the time is before the window end (can be before window start for on-time arrivals).
  */
 function isInWindow($timestamp, $windows) {
     $dt = new DateTime($timestamp);
     $dayOfWeek = (int)$dt->format('w');
-    $time = $dt->format('H:i:s');
+    $timeSeconds = strtotime($dt->format('H:i:s'));
 
     foreach ($windows as $window) {
-        if ($window['day_of_week'] == $dayOfWeek &&
-            $time >= $window['start_time'] &&
-            $time <= $window['end_time']) {
+        if ($window['day_of_week'] != $dayOfWeek) continue;
+
+        $endSeconds = strtotime($window['end_time']);
+
+        // In window if on the same day and before or at window end
+        if ($timeSeconds <= $endSeconds) {
             return true;
         }
     }
@@ -470,23 +476,30 @@ function isInWindow($timestamp, $windows) {
 
 /**
  * Helper: Get status (on_time, late, outside_window) for a timestamp
+ *
+ * On-time logic: A sign-in is "on_time" if it occurs ANY TIME on the same day
+ * before the window start, OR within GRACE_PERIOD_MINUTES after the start.
+ * It's "late" if after the grace period but still within the window.
  */
 function getWindowStatus($timestamp, $windows) {
     $dt = new DateTime($timestamp);
     $dayOfWeek = (int)$dt->format('w');
-    $time = $dt->format('H:i:s');
+    $timeSeconds = strtotime($dt->format('H:i:s'));
 
     foreach ($windows as $window) {
-        if ($window['day_of_week'] == $dayOfWeek &&
-            $time >= $window['start_time'] &&
-            $time <= $window['end_time']) {
-            // Check grace period (uses GRACE_PERIOD_MINUTES from config)
-            $graceEnd = date('H:i:s', strtotime($window['start_time'] . ' +' . GRACE_PERIOD_MINUTES . ' minutes'));
-            if ($time <= $graceEnd) {
-                return 'on_time';
-            } else {
-                return 'late';
-            }
+        if ($window['day_of_week'] != $dayOfWeek) continue;
+
+        $startSeconds = strtotime($window['start_time']);
+        $endSeconds = strtotime($window['end_time']);
+        $graceEndSeconds = $startSeconds + (GRACE_PERIOD_MINUTES * 60);
+
+        // On-time: any time before window start, or within grace period after start
+        if ($timeSeconds <= $graceEndSeconds) {
+            return 'on_time';
+        }
+        // Late: after grace period but still within window
+        if ($timeSeconds > $graceEndSeconds && $timeSeconds <= $endSeconds) {
+            return 'late';
         }
     }
     return 'outside_window';
