@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS attendance_log (
     student_id VARCHAR(20) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     action ENUM('in', 'out') NOT NULL,
-    status ENUM('on_time', 'late', 'outside_window') DEFAULT NULL,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
     INDEX idx_student_timestamp (student_id, timestamp),
     INDEX idx_timestamp (timestamp)

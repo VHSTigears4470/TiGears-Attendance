@@ -331,14 +331,7 @@ while ($row = $result->fetch_assoc()) {
                             <option value="out" ${record.action === 'out' ? 'selected' : ''}>Sign Out</option>
                         </select>
                     </td>
-                    <td>
-                        <select class="edit-status">
-                            <option value="" ${!record.status ? 'selected' : ''}>-</option>
-                            <option value="on_time" ${record.status === 'on_time' ? 'selected' : ''}>On Time</option>
-                            <option value="late" ${record.status === 'late' ? 'selected' : ''}>Late</option>
-                            <option value="outside_window" ${record.status === 'outside_window' ? 'selected' : ''}>Outside Window</option>
-                        </select>
-                    </td>
+                    <td><em>(calculated)</em></td>
                     <td class="actions-cell">
                         <button class="icon-btn save" title="Save" data-id="${record.id}">&#128190;</button>
                         <button class="icon-btn cancel" title="Cancel" data-id="${record.id}">&#10006;</button>
@@ -421,29 +414,22 @@ while ($row = $result->fetch_assoc()) {
                 // Save changes
                 const timestampInput = tr.querySelector('.edit-timestamp');
                 const actionSelect = tr.querySelector('.edit-action');
-                const statusSelect = tr.querySelector('.edit-status');
 
                 const timestamp = new Date(timestampInput.value).toISOString().slice(0, 19).replace('T', ' ');
                 const action = actionSelect.value;
-                const status = statusSelect.value;
 
                 try {
                     const response = await fetch('../backend/attendance_admin.php', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id, timestamp, action, status })
+                        body: JSON.stringify({ id, timestamp, action })
                     });
 
                     const data = await response.json();
 
                     if (data.success) {
-                        // Update local record
-                        record.timestamp = timestamp;
-                        record.action = action;
-                        record.status = status || null;
-
-                        const newTr = renderRow(record, false);
-                        tr.replaceWith(newTr);
+                        // Reload records to get recalculated status
+                        await loadRecords(document.getElementById('studentSelect').value);
                         showMessage('Record updated successfully!', 'success');
                     } else {
                         showMessage(data.message || 'Failed to update record', 'error');
