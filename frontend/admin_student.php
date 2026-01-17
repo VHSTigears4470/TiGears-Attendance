@@ -212,18 +212,31 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .nav-links {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .nav-links a {
-            color: #667eea;
+            color: white;
             text-decoration: none;
             font-weight: 600;
             margin-right: 20px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .nav-links a:hover {
             text-decoration: underline;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .section-content {
+            border: none;
+            border-radius: 0;
         }
     </style>
 </head>
