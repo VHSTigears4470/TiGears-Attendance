@@ -1,99 +1,111 @@
-# Robotics Team Attendance System
+# TiGears Robotics Attendance System
 
-A simple, touch-friendly attendance tracking system for high school robotics teams built with PHP and MySQL.
+A touch-friendly attendance tracking system for robotics teams, built with PHP and MySQL. Features configurable attendance windows, automatic award tracking, and a kiosk-optimized interface.
 
 ## Features
 
-- Touch-optimized interface for kiosk/tablet use
-- Simple sign-in/sign-out flow without authentication
-- Student roster management
-- Attendance logging with timestamps
+- **Touch-optimized interface** for kiosk/tablet use with large buttons and numeric keypad
+- **Student ID verification** - students enter their ID to confirm identity before signing in/out
+- **Configurable attendance windows** - define meeting days and times (e.g., Tue/Thu 2-4pm, Sat 9am-1pm)
+- **Automatic award tracking** with three leaderboards:
+  - **Consecutive Meetings** - longest streak of attended windows
+  - **Attendance Score** - weighted points (on-time = 3pts, late = 2pts)
+  - **Total Time** - cumulative hours during attendance windows
+- **Grace period** for on-time arrivals (configurable, default 5 minutes)
+- **Auto-refresh** every 5 minutes to update awards
+- **Admin pages** for managing attendance windows and editing student records
 
-## Setup Instructions
+## How Awards Work
 
-### 1. Database Setup
+Awards are calculated from a **transformed data structure** that:
+- Generates all valid window occurrences between the earliest and latest attendance records
+- Transforms raw sign-in/sign-out data into per-window attendance records
+- Automatically signs out students at window end if they forgot to sign out
+- Ignores sign-ins that carried over from the previous day
+- Only counts completed windows (not in-progress ones)
 
-1. Make sure MySQL is installed and running on your Windows machine
-2. Open MySQL command line or phpMyAdmin
-3. Run the SQL script to create the database and tables:
-   ```bash
-   mysql -u root -p < schema.sql
-   ```
-   Or import `schema.sql` through phpMyAdmin
+This ensures accurate metrics even when students forget to sign out.
 
-### 2. Configuration
+## Setup
 
-1. Edit `config.php` and update the database credentials:
-   - `DB_USER`: Your MySQL username (default: 'root')
-   - `DB_PASS`: Your MySQL password
-   - `DB_NAME`: Database name (default: 'robotics_attendance')
+See [docs/Setup.md](docs/Setup.md) for detailed installation instructions.
 
-2. Update the timezone in `config.php` if needed (default: 'America/New_York')
+### Quick Start
 
-### 3. Web Server Setup
-
-1. Install a web server with PHP support:
-   - **XAMPP** (recommended for Windows): https://www.apachefriends.org/
-   - **WAMP**: https://www.wampserver.com/
-   - Or use PHP's built-in server for testing
-
-2. Copy all files to your web server's document root:
-   - XAMPP: `C:\xampp\htdocs\attendance\`
-   - WAMP: `C:\wamp64\www\attendance\`
-
-3. Start Apache and MySQL services
-
-### 4. Access the Application
-
-Open a web browser and navigate to:
-- `http://localhost/attendance/` (if using XAMPP/WAMP)
-- Or `http://localhost:8000/` if using PHP built-in server
+1. Install XAMPP or similar (Apache + MySQL + PHP)
+2. Copy files to your web root (e.g., `C:\xampp\htdocs\attendance\`)
+3. Run `backend/schema.sql` to create the database
+4. Edit `backend/config.php` with your database credentials
+5. Access `http://localhost/attendance/frontend/`
 
 ## File Structure
 
-- `index.php` - Main page displaying student roster
-- `attendance.php` - Backend handler for sign-in/sign-out requests
-- `db.php` - Database connection
-- `config.php` - Configuration file
-- `schema.sql` - Database schema
-- `style.css` - Styling for touch interface
-- `script.js` - Frontend JavaScript logic
+```
+├── backend/
+│   ├── config.php           # Database credentials, timezone, grace period
+│   ├── db.php               # Database connection
+│   ├── schema.sql           # Database schema
+│   ├── attendance.php       # Sign-in/sign-out API endpoint
+│   ├── attendance_admin.php # CRUD API for attendance records
+│   ├── windows.php          # CRUD API for attendance windows
+│   ├── status_helper.php    # On-time/late status calculation
+│   └── delete_pre_2026.sql  # Migration script to purge old data
+│
+├── frontend/
+│   ├── index.php            # Main attendance page
+│   ├── admin.php            # Manage attendance windows
+│   ├── admin_student.php    # Edit student attendance records
+│   ├── awards.php           # Award calculation functions
+│   ├── window_transform.php # Window-based data transformation
+│   ├── script.js            # Frontend JavaScript
+│   ├── style.css            # Touch-optimized styling
+│   └── assets/              # Logo and background images
+│
+└── docs/
+    ├── Setup.md             # Installation guide
+    └── AddAwards.md         # Guide to adding new awards
+```
 
 ## Database Schema
 
-### Students Table
-- `student_id` (VARCHAR, PRIMARY KEY) - Unique student identifier
-- `name` (VARCHAR) - Student's full name
-- `created_at` (TIMESTAMP) - Record creation timestamp
+### Tables
 
-### Attendance Log Table
-- `id` (INT, AUTO_INCREMENT, PRIMARY KEY) - Unique log entry ID
-- `student_id` (VARCHAR, FOREIGN KEY) - References students table
-- `timestamp` (TIMESTAMP) - When the action occurred
-- `action` (ENUM: 'in', 'out') - Whether student signed in or out
+- **students** - `student_id`, `name`, `created_at`
+- **attendance_log** - `id`, `student_id`, `timestamp`, `action` (in/out)
+- **attendance_windows** - `id`, `day_of_week` (0-6), `start_time`, `end_time`
 
 ## Usage
 
-1. Students walk up to the touchscreen
-2. They tap their name from the list
-3. They tap either "Sign In" or "Sign Out"
-4. A confirmation message appears
-5. The system logs the action with a timestamp
+### For Students
+1. Find your name in the Signed Out or Never Signed In list
+2. Tap your name
+3. Enter your student ID on the keypad
+4. Tap Confirm to sign in/out
+
+### For Admins
+- Click the right logo to access the admin page
+- **Manage Windows**: Add/remove attendance windows (days and times)
+- **Edit Records**: View and modify individual student attendance records
+
+## Configuration
+
+Edit `backend/config.php`:
+
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', 'your_password');
+define('DB_NAME', 'robotics_attendance');
+
+date_default_timezone_set('America/Los_Angeles');
+
+define('GRACE_PERIOD_MINUTES', 5);  // Minutes after window start to count as on-time
+```
 
 ## Adding Students
 
-To add students to the system, run SQL commands like:
-
 ```sql
-INSERT INTO students (student_id, name) VALUES ('1006', 'Jane Doe');
+INSERT INTO students (student_id, name) VALUES ('12345', 'Jane Doe');
 ```
 
-Or use phpMyAdmin to add records through the GUI.
-
-## Next Steps
-
-Consider adding:
-- Admin panel to manage students
-- Reports showing attendance history
-- Export functionality for attendance records
-- Student photos for easier identification
+Or import test data from `backend/student_data.sql` if available.
