@@ -5,7 +5,7 @@ let selectedStudentStatus = null;
 let enteredStudentId = '';
 
 // Get DOM elements
-const studentButtons = document.querySelectorAll('.student-item');
+const studentButtons = document.querySelectorAll('.roster-item');
 const keypadContainer = document.getElementById('keypadContainer');
 const confirmBtn = document.getElementById('confirmBtn');
 const cancelBtn = document.getElementById('cancelBtn');
@@ -13,7 +13,7 @@ const messageDiv = document.getElementById('message');
 const studentIdInput = document.getElementById('studentIdInput');
 const clearBtn = document.getElementById('clearBtn');
 const keypadButtons = document.querySelectorAll('.keypad-btn');
-const studentLists = document.querySelector('.student-lists');
+const studentRoster = document.querySelector('.student-roster');
 
 // Add click event to all student buttons
 studentButtons.forEach(button => {
@@ -32,21 +32,18 @@ studentButtons.forEach(button => {
         // Clear any previous message
         hideMessage();
 
-        // Show keypad and hide student lists
+        // Show keypad and hide student roster
         enteredStudentId = '';
         studentIdInput.value = '';
         keypadContainer.style.display = 'block';
-        studentLists.style.display = 'none';
+        studentRoster.style.display = 'none';
 
         // Update confirm button text based on status
         if (selectedStudentStatus === 'in') {
             confirmBtn.textContent = 'Confirm Sign Out';
             confirmBtn.className = 'action-button confirm sign-out';
-        } else if (selectedStudentStatus === 'out') {
-            confirmBtn.textContent = 'Confirm Sign In';
-            confirmBtn.className = 'action-button confirm sign-in';
         } else {
-            confirmBtn.textContent = 'Confirm First Sign In';
+            confirmBtn.textContent = 'Confirm Sign In';
             confirmBtn.className = 'action-button confirm sign-in';
         }
 
@@ -163,7 +160,7 @@ function clearSelection() {
     enteredStudentId = '';
     studentIdInput.value = '';
     keypadContainer.style.display = 'none';
-    studentLists.style.display = 'grid';
+    studentRoster.style.display = 'block';
     hideMessage();
 }
 

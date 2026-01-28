@@ -1,18 +1,35 @@
 <?php
 require_once '../backend/db.php';
 require_once 'awards.php';
+require_once 'window_transform.php';
 
 // Load transformed data for awards
 // This handles: window generation, time capping at window end, ignoring carry-over sign-ins
 $transformedData = loadAwardData($conn);
 
-// Query to get all students with their last attendance status
+// Check if we're past today's attendance window
+$today = date('Y-m-d');
+$todayDayOfWeek = date('w'); // 0 = Sunday, 6 = Saturday
+$now = time();
+
+// Get today's window (if any)
+$windowResult = $conn->query("SELECT start_time, end_time FROM attendance_windows WHERE day_of_week = $todayDayOfWeek LIMIT 1");
+$todayWindow = $windowResult->fetch_assoc();
+$isPastWindow = false;
+
+if ($todayWindow) {
+    $windowEnd = strtotime($today . ' ' . $todayWindow['end_time']);
+    $isPastWindow = ($now > $windowEnd);
+}
+
+// Query to get all students with their TODAY's sign-in status
+// A student is "signed in" only if their last action TODAY is 'in'
 $sql = "
     SELECT
         s.student_id,
         s.name,
-        al.last_action,
-        al.last_timestamp
+        today_log.last_action,
+        today_log.last_timestamp
     FROM students s
     LEFT JOIN (
         SELECT
@@ -20,31 +37,32 @@ $sql = "
             action as last_action,
             timestamp as last_timestamp
         FROM attendance_log al1
-        WHERE timestamp = (
+        WHERE DATE(timestamp) = CURDATE()
+          AND timestamp = (
             SELECT MAX(timestamp)
             FROM attendance_log al2
             WHERE al2.student_id = al1.student_id
+              AND DATE(al2.timestamp) = CURDATE()
         )
-    ) al ON s.student_id = al.student_id
+    ) today_log ON s.student_id = today_log.student_id
     ORDER BY s.name ASC
 ";
 
 $result = $conn->query($sql);
 
-// Categorize students by status
-$logged_in = [];
-$logged_out = [];
-$never_logged = [];
+// Build list of all students with their sign-in status for today
+$all_students = [];
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        if ($row['last_action'] === null) {
-            $never_logged[] = $row;
-        } elseif ($row['last_action'] === 'in') {
-            $logged_in[] = $row;
-        } else {
-            $logged_out[] = $row;
+        // Determine if currently signed in (only if they have a sign-in TODAY and last action is 'in')
+        // If we're past the window, everyone shows as signed out
+        $isSignedIn = false;
+        if (!$isPastWindow && $row['last_action'] === 'in') {
+            $isSignedIn = true;
         }
+        $row['is_signed_in'] = $isSignedIn;
+        $all_students[] = $row;
     }
 }
 ?>
@@ -130,59 +148,34 @@ if ($result->num_rows > 0) {
             </div>
         </div>
 
-        <div class="student-lists">
-            <!-- Signed In Students -->
-            <div class="student-list-section signed-in-section">
-                <h2 class="list-title signed-in-title">Signed In (<?php echo count($logged_in); ?>)</h2>
-                <div class="student-list">
-                    <?php
-                    if (count($logged_in) > 0) {
-                        foreach($logged_in as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="in">';
-                            echo htmlspecialchars($student['name']);
-                            echo '</button>';
-                        }
-                    } else {
-                        echo '<p class="empty-list">No students currently signed in</p>';
-                    }
-                    ?>
-                </div>
+        <?php
+        // Count signed in students for the header
+        $signedInCount = 0;
+        foreach ($all_students as $student) {
+            if ($student['is_signed_in']) $signedInCount++;
+        }
+        ?>
+        <div class="student-roster">
+            <div class="roster-header">
+                <h2 class="roster-title">Today's Attendance</h2>
+                <span class="roster-count"><?php echo $signedInCount; ?> / <?php echo count($all_students); ?> signed in</span>
             </div>
-
-            <!-- Signed Out Students -->
-            <div class="student-list-section signed-out-section">
-                <h2 class="list-title signed-out-title">Signed Out (<?php echo count($logged_out); ?>)</h2>
-                <div class="student-list">
-                    <?php
-                    if (count($logged_out) > 0) {
-                        foreach($logged_out as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="out">';
-                            echo htmlspecialchars($student['name']);
-                            echo '</button>';
-                        }
-                    } else {
-                        echo '<p class="empty-list">No students signed out</p>';
+            <div class="roster-grid">
+                <?php
+                if (count($all_students) > 0) {
+                    foreach($all_students as $student) {
+                        $statusClass = $student['is_signed_in'] ? 'signed-in' : 'signed-out';
+                        $statusIcon = $student['is_signed_in'] ? '&#10004;' : '&#10008;';
+                        $dataStatus = $student['is_signed_in'] ? 'in' : 'out';
+                        echo '<button class="roster-item ' . $statusClass . '" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="' . $dataStatus . '">';
+                        echo '<span class="roster-icon">' . $statusIcon . '</span>';
+                        echo '<span class="roster-name">' . htmlspecialchars($student['name']) . '</span>';
+                        echo '</button>';
                     }
-                    ?>
-                </div>
-            </div>
-
-            <!-- Never Signed In Students -->
-            <div class="student-list-section never-signed-section">
-                <h2 class="list-title never-signed-title">Never Signed In (<?php echo count($never_logged); ?>)</h2>
-                <div class="student-list">
-                    <?php
-                    if (count($never_logged) > 0) {
-                        foreach($never_logged as $student) {
-                            echo '<button class="student-item" data-student-id="' . htmlspecialchars($student['student_id']) . '" data-status="never">';
-                            echo htmlspecialchars($student['name']);
-                            echo '</button>';
-                        }
-                    } else {
-                        echo '<p class="empty-list">All students have signed in at least once</p>';
-                    }
-                    ?>
-                </div>
+                } else {
+                    echo '<p class="empty-list">No students registered</p>';
+                }
+                ?>
             </div>
         </div>
     </div>

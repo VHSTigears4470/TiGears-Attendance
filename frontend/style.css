@@ -421,95 +421,106 @@ h1 {
     color: white;
 }
 
-/* Student lists layout */
-.student-lists {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.student-list-section {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+/* Student Roster - Unified two-column layout */
+.student-roster {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    margin-top: 15px;
 }
 
-.list-title {
-    font-size: 1em;
+.roster-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.roster-title {
+    font-size: 1.1em;
     font-weight: bold;
-    padding: 12px 10px;
-    text-align: center;
-    border-radius: 0;
-    margin: 0;
     color: white;
+    margin: 0;
 }
 
-.signed-in-title {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+.roster-count {
+    font-size: 0.95em;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
 }
 
-.signed-out-title {
-    background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
-}
-
-.never-signed-title {
-    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-}
-
-.student-list {
+.roster-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
     background: #f8f9fa;
-    border: none;
-    border-radius: 0;
-    padding: 8px;
-    overflow-y: auto;
-    max-height: calc(100vh - 350px);
+    max-height: calc(100vh - 400px);
     min-height: 200px;
-    flex: 1;
+    overflow-y: auto;
 }
 
-.student-item {
+.roster-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: white;
     color: #333;
     border: 2px solid #ddd;
-    border-radius: 6px;
-    padding: 12px 10px;
-    font-size: 0.9em;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.95em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    display: block;
-    width: 100%;
-    margin-bottom: 6px;
     text-align: left;
 }
 
-.student-item:last-child {
-    margin-bottom: 0;
+.roster-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.student-item:hover {
-    transform: translateX(3px);
-    border-color: #667eea;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+.roster-item:active {
+    transform: translateY(0);
 }
 
-.student-item:active {
-    transform: translateX(1px);
-}
-
-.student-item.selected {
+.roster-item.selected {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: white;
     border-color: #f5576c;
-    transform: translateX(5px);
+}
+
+.roster-item.selected .roster-icon {
+    color: white;
+}
+
+.roster-icon {
+    font-size: 1.3em;
+    font-weight: bold;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.roster-item.signed-in .roster-icon {
+    color: #4CAF50;
+}
+
+.roster-item.signed-out .roster-icon {
+    color: #f44336;
+}
+
+.roster-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .empty-list {
@@ -518,11 +529,12 @@ h1 {
     font-size: 0.85em;
     padding: 20px 10px;
     font-style: italic;
+    grid-column: 1 / -1;
 }
 
 /* Touch-friendly enhancements */
 @media (hover: none) {
-    .student-item:hover,
+    .roster-item:hover,
     .action-button:hover {
         transform: none;
     }
@@ -530,11 +542,8 @@ h1 {
 
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
-    .student-lists {
+    .roster-grid {
         grid-template-columns: 1fr;
-    }
-
-    .student-list {
-        max-height: 300px;
+        max-height: 400px;
     }
 }
